@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,25 +18,31 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ProgressDialog customProgressDialog;
     private static final String TAG = "MainActivity";
     private retrofitURL retrofitURL;
     private Api api = retrofitURL.retrofit.create(Api.class);
 
     private int cnt = 1;
 
+    private LinearLayout btn_search;
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7, tv8;
-    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn0, btn_back, btn_delete, btn_search;
+    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn0, btn_back, btn_delete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //로딩창 객체 생성
+        customProgressDialog = new ProgressDialog(this);
+        ProgressDialog customProgressDIalog = new ProgressDialog(this);
+        //로딩창을 투명하게
+        customProgressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
         init();
         onClick();
-
-
     }
-
 
     public void init() {
         tv1 = findViewById(R.id.textView1);
@@ -58,30 +68,45 @@ public class MainActivity extends AppCompatActivity {
         btn_search = findViewById(R.id.btn_search);
         btn_back = findViewById(R.id.btn_back);
         btn_delete = findViewById(R.id.btn_delete);
+
+
     }
 
     public void onClick() {
 
         btn_search.setOnClickListener(v -> {
 
-            String phoneNumber = "010" + tv1.getText() + tv2.getText() + tv3.getText() + tv4.getText() + tv5.getText() + tv6.getText() + tv7.getText() + tv8.getText();
-            Log.d(TAG, "onClick phoneNumber: " + phoneNumber);
-            Call<CMRespDto<RespDto>> call = api.search(phoneNumber);
-            call.enqueue(new Callback<CMRespDto<RespDto>>() {
-                @Override
-                public void onResponse(Call<CMRespDto<RespDto>> call, Response<CMRespDto<RespDto>> response) {
-                    Log.d(TAG, "onResponse:  성공");
-                    CMRespDto<RespDto> cmRespDto = response.body();
-                    Log.d(TAG, "onResponse getCode : "+cmRespDto.getCode());
-                    Log.d(TAG, "onResponse getData : "+cmRespDto.getData().getCoupon());
-                }
+            if(cnt == 9){
+                String phoneNumber = "010" + tv1.getText() + tv2.getText() + tv3.getText() + tv4.getText() + tv5.getText() + tv6.getText() + tv7.getText() + tv8.getText();
+                Log.d(TAG, "onClick phoneNumber: " + phoneNumber);
+                // 로딩창 보여주기
+                customProgressDialog.show();
+                Call<CMRespDto<RespDto>> call = api.search(phoneNumber);
+                call.enqueue(new Callback<CMRespDto<RespDto>>() {
+                    @Override
+                    public void onResponse(Call<CMRespDto<RespDto>> call, Response<CMRespDto<RespDto>> response) {
+                        Log.d(TAG, "onResponse:  성공");
+                        customProgressDialog.hide();
+                        CMRespDto<RespDto> cmRespDto = response.body();
 
-                @Override
-                public void onFailure(Call<CMRespDto<RespDto>> call, Throwable t) {
-                    Log.d(TAG, "onFailure: 실패"+call+t);
-                }
-            });
+                        Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("stamp",cmRespDto.getData().getStamp() + "");
+                        intent.putExtra("afterStamp",cmRespDto.getData().getAfterStamp() + "");
+                        intent.putExtra("afterCoupon",cmRespDto.getData().getAfterCoupon() + "");
+                        startActivity(intent);
+                        MainActivity.this.finish();
+                    }
 
+                    @Override
+                    public void onFailure(Call<CMRespDto<RespDto>> call, Throwable t) {
+                        Log.d(TAG, "onFailure: 실패"+call+t);
+                        customProgressDialog.hide();
+                    }
+                });
+            }else{
+                Toast.makeText(getApplicationContext(),"휴대폰 번호를 전부 입력해주세요.",Toast.LENGTH_SHORT).show();
+            }
         });
 
 

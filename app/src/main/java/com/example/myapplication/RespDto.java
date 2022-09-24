@@ -3,17 +3,37 @@ package com.example.myapplication;
 
 public class RespDto {
 
-    private int coupon;
+    private int stamp;
+    private int afterStamp;
+    private int afterCoupon;
 
-    public RespDto(int coupon) {
-        this.coupon = coupon;
+    public RespDto(int stamp, int afterStamp, int afterCoupon) {
+        this.stamp = stamp;
+        this.afterStamp = afterStamp;
+        this.afterCoupon = afterCoupon;
     }
 
-    public int getCoupon() {
-        return coupon;
+    public int getStamp() {
+        return stamp;
     }
 
-    public void setCoupon(int coupon) {
-        this.coupon = coupon;
+    public void setStamp(int stamp) {
+        this.stamp = stamp;
+    }
+
+    public int getAfterStamp() {
+        return afterStamp;
+    }
+
+    public void setAfterStamp(int afterStamp) {
+        this.afterStamp = afterStamp;
+    }
+
+    public int getAfterCoupon() {
+        return afterCoupon;
+    }
+
+    public void setAfterCoupon(int afterCoupon) {
+        this.afterCoupon = afterCoupon;
     }
 }
