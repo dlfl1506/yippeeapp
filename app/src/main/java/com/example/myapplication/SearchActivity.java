@@ -155,7 +155,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(8000);
                     Intent intent = new Intent(SearchActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

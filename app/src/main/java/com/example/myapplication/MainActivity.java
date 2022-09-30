@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
         onClick();
     }
 
+    @Override
+    public void onBackPressed() {
+ //       super.onBackPressed();
+    }
+
     public void init() {
         tv1 = findViewById(R.id.textView1);
         tv2 = findViewById(R.id.textView2);
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn_search.setOnClickListener(v -> {
 
-            if(cnt == 9){
+            if (cnt == 9) {
                 String phoneNumber = "010" + tv1.getText() + tv2.getText() + tv3.getText() + tv4.getText() + tv5.getText() + tv6.getText() + tv7.getText() + tv8.getText();
                 Log.d(TAG, "onClick phoneNumber: " + phoneNumber);
                 // 로딩창 보여주기
@@ -89,23 +94,28 @@ public class MainActivity extends AppCompatActivity {
                         customProgressDialog.hide();
                         CMRespDto<RespDto> cmRespDto = response.body();
 
-                        Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra("stamp",cmRespDto.getData().getStamp() + "");
-                        intent.putExtra("afterStamp",cmRespDto.getData().getAfterStamp() + "");
-                        intent.putExtra("afterCoupon",cmRespDto.getData().getAfterCoupon() + "");
-                        startActivity(intent);
-                        MainActivity.this.finish();
+                        if (cmRespDto.getCode() == 1) {
+                            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.putExtra("stamp", cmRespDto.getData().getStamp() + "");
+                            intent.putExtra("afterStamp", cmRespDto.getData().getAfterStamp() + "");
+                            intent.putExtra("afterCoupon", cmRespDto.getData().getAfterCoupon() + "");
+                            startActivity(intent);
+                            MainActivity.this.finish();
+                        } else {
+                            customProgressDialog.hide();
+                        }
+
                     }
 
                     @Override
                     public void onFailure(Call<CMRespDto<RespDto>> call, Throwable t) {
-                        Log.d(TAG, "onFailure: 실패"+call+t);
+                        Log.d(TAG, "onFailure: 실패" + call + t);
                         customProgressDialog.hide();
                     }
                 });
-            }else{
-                Toast.makeText(getApplicationContext(),"휴대폰 번호를 전부 입력해주세요.",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "휴대폰 번호를 전부 입력해주세요.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -187,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 8:
                     tv8.setText(btn0.getText());
+                    cnt++;
                     break;
             }
         });
