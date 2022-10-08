@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         ProgressDialog customProgressDIalog = new ProgressDialog(this);
         //로딩창을 투명하게
         customProgressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        customProgressDialog.setCancelable(false); // 로딩시 백그라운드 터치 막기
 
         init();
         onClick();
